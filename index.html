@@ -1,0 +1,802 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Images for all sizes</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/blood.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <style type="text/css">
+
+      img {
+        border: 0 !important;
+      }
+    </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h1>Images for all sizes</h1>
+        </section>
+        <section>
+          <h2>Brent Purton</h2>
+          <h4>Frontend Developer</h4>
+          <h5>Digital Echidna</h5>
+          <h5>London, Ontario, Canada</h5>
+          <aside class="notes">
+
+            Welcome everyone, My name is brent purton, I am a front end developer at Digital Echidna.
+
+            At Digital Echidna we do a lot of large sites, a lot of them for post secondary education and healthcare, which usually tend to need high quality images that load quickly on any screen size.
+          </aside>
+        </section>
+        <section>
+        <h2>The problem</h2>
+        <aside style="float: left; width: 50%;">
+          <img src="img/terrible-image.jpg" />
+        </aside>
+        <aside class="fragment" style="float: right; width: 50%;">
+          <img src="img/slow-load.gif" />
+        </aside>
+        <!-- (example of image taking forever to load on a phone) -->
+        <aside class="notes">
+          The problem with this is that Images that are optimized for a mobile device are small and load quickly but look terrible on larger screens
+
+          (next slide)
+
+          Images that are optimized for a large screen or retina screen are bigger and higher quality, but take forever to load and impact data usage on a mobile device.
+
+          It used to be that you would just do your best to optimize the image so it look passible on all screen sizes. There weren't as many screen sizes. so it was much easier to get away with this. these images were fine for their fixed width layout, but were not responsive.
+
+          So how can we have more responsive images that look good everywhere?
+        </aside>
+        </section>
+        <section>
+          <h3>css solution?</h3>
+          <p>Export image at different sizes</p>
+          <aside class="notes">
+            The first conclusion you might come to is Maybe we could do this with css using media queries since you can use those for most aspects of responsive web development
+          </aside>
+        </section>
+        <section data-background-image="img/exported-images-2.gif" data-background-size="contain" data-background-video-loop="true">
+          <aside class="notes">
+            What if we exported the image at several different sizes from large to small, you can see here i have exported this image at 5 different sizes and named them all according to their size.
+          </aside>
+        </section>
+        <section>
+          <h3>CSS solution?</h3>
+          <p>Place all the images in the markup with classes</p>
+          <pre><code>
+            <div class="demo-image">
+              <img src="img/demo-image-xs.jpg" class="demo-image-xs" />
+              <img src="img/demo-image-s.jpg" class="demo-image-s" />
+              <img src="img/demo-image-m.jpg" class="demo-image-m" />
+              <img src="img/demo-image-l.jpg" class="demo-image-l" />
+              <img src="img/demo-image-xl.jpg" class="demo-image-xl" />
+            </div>
+          </code></pre>
+          <aside class="notes">
+            Then I could place all the images on the page with a class that corresponds to its size. So you can see here that I have given these all a class according to what size of image it is.
+          </aside>
+        </section>
+        <section>
+          <h3>CSS solution?</h3>
+          <p>Display or hide with a media query depending on screen size</p>
+          <pre><code>
+            .demo-image-xs {
+              display: none;
+
+              @include breakpoint(max-width $xs-break - .1) {
+                display: block;
+              }
+            }
+
+            .demo-image-s {
+              display: none;
+
+              @include breakpoint($xs-break $s-break - .1) {
+                display: block;
+              }
+            }
+
+            .demo-image-m {
+              display: none;
+
+              @include breakpoint($s-break $m-break - .1) {
+                display: block;
+              }
+            }
+
+            .demo-image-l {
+              display: none;
+
+              @include breakpoint($m-break $l-break - .1) {
+                display: block;
+              }
+            }
+
+            .demo-image-xl {
+              display: none;
+
+              @include breakpoint($l-break) {
+                display: block;
+              }
+            }
+          </code></pre>
+          <aside class="notes">
+            Now that they all have a class on them according to what size they are, I can target each one to dislay or hide it inside of media queries in my css. Lets see what that would look like on a page.
+          </aside>
+        </section>
+        <section data-background-image="img/resizing-2.gif" data-background-size="contain">
+          <aside class="notes">
+            So it looks like this is working, the image is retaining the quality at any size.
+          </aside>
+        </section>
+        <section data-background-video="img/good-idea.mp4" data-background-size="contain">
+          <aside class="notes">
+            This is starting to seem like it might be a good idea...but
+          </aside>
+        </section>
+        <section data-background-video="img/bad-idea.mp4" data-background-size="contain">
+          <aside class="notes">
+            Here is why this might be a bad idea.
+          </aside>
+        </section>
+        <section>
+          <h3>CSS solution</h3>
+          <p>We are still downloading all these images at every screen size</p>
+          <img src="img/resources.png">
+          <aside class="notes">
+            If i look at the network panel in the inspector We are still downloading all of these images regardless of the screen size. So you can imagine that if you have a lot of images on the site, that can be a lot of data that needs to be downloaded. This can especially be a problem on mobile devices where someone might not have a good connection, which would make the page take forever to load and also burn through data rather quickly.
+            <br>
+            This happens because the HTML file is what the browser parses first, It doesn't know which image size it should be downloading so it just downloads all of them. What if there was a way to let the browser know what size of image it should be downloading in the html file?
+          </aside>
+        </section>
+        <section>
+          <h2>srcset and sizes</h2>
+          <p>Provide layout information in the html file</p>
+          <pre><code>
+            &lt;img
+            srcset=&quot;large-image.jpg 1024w,
+                    medium-image.jpg 640w,
+                    small-image.jpg 320w&quot;
+            sizes=&quot;(min-width: 30em) 33.3vw,
+                    100vw&quot;
+            src=&quot;small-image.jpg&quot;
+            alt=&quot;My image&quot; /&gt;
+          </code></pre>
+          <aside class="notes">
+            Thats where the srcset and sizes attributes come in.
+            <br>
+            These are attributes that can be used on the image tag.
+            <br>
+            So if we look at this markup, the first thing we see is srcset attribute.
+            <br>
+            This is telling the browser that there are multiple images that it can choose from, the first value is the name of the image. The second value is the width of the image.
+            <br>
+            The second thing we see is the sizes attribute.
+            <br>
+            This is saying if the screen is larger than 30em, to make the image 33.3% of the viewport width, otherwise make it 100% of the viewport width.
+            <br>
+            With this information, the browser is smart enough to pick the image that will be a little bit larger that the viewport width. This also works for pixel density, so if you are viewing this on a retina display, the browser will be able to pick an image that will be large enough to display at double the size.
+            <br>
+            It also specifies a fallback image (the src), if everything else fails.
+            <br>
+            If we want to use this, how can we set it up?
+          </aside>
+        </section>
+        <section>
+          <h2>Determining the sizes</h2>
+          <img src="img/page-layout.png">
+          <aside class="notes">
+            So using this page as an example..
+
+            The first thing we need to do is understand how our image fits into our layout. In this case we want to use this on the image that we have on the right side of the page.
+          </aside>
+        </section>
+        <section>
+          <pre><code>
+            .layout--twocol {
+
+              > .layout__region--second {
+                  width: 100%;
+
+                @include breakpoint($s-break) {
+                  width: 32%;
+                  float: right;
+                }
+
+                @include breakpoint($m-break) {
+                  width: 40%;
+                }
+
+                @include breakpoint($l-break) {
+                  width: 32%;
+                }
+              }
+
+              > .layout__region--first {
+                width: 100%;
+
+                @include breakpoint($s-break) {
+                  width: 66%;
+                  margin-right: 2%;
+                  float: left;
+                }
+
+                @include breakpoint($m-break) {
+                  width: 58%
+                }
+
+                @include breakpoint($l-break) {
+                  width: 66%;
+                }
+              }
+            }
+          </code></pre>
+          <aside class="notes">
+            If look in the sass file for the rule that is controlling this image, we can see that the container for that image displays full width by default, and then changes size when it hits a few breakpoints. When it hits the first breakpoint it will take up 32% of the layout, at the second breakpoint it will take up 40% of the layout, and then at the final breakpoint it will go back to taking up 32% of the layout.
+          </aside>
+        </section>
+        <section>
+          <h3>Layout Variables</h3>
+            <pre><code>
+              // Breakpoints
+              $xs-break: 20em; //(320px)
+              $s-break:  32em; //(525px)
+              $m-break:  50em; //(800px)
+              $l-break:  64em; //(1024px)
+              $xl-break: 90em; //(1440px)
+
+              $max-width: $xl-break;
+              $side-padding: 1.25em //(20px)
+            </code></pre>
+
+            <aside class="notes">
+              and somewhere else in my sass file we can see what each of those breakpoints are, and we can also see that the maxiumum width is set to the largest breakpoint, which is 90ems, which works out to 1440px. There is also a variable here for side-padding, which is on the outer layout container, so that will push everything away from the edges of the browser by 1.25em, which is 20px.
+            </aside>
+        </section>
+        <section>
+          <h3>Calculating the sizes</h3>
+          <table>
+            <thead>
+              <th>Breakpoint</th>
+              <th>min-width</th>
+              <th>max-width</th>
+            </thead>
+            <tr>
+              <td>default</td>
+              <td>(320-40) x 1 = <b>280</b></td>
+              <td>(511-40) x 1 = <b>471</b></td>
+            </tr>
+            <tr>
+              <td>$s-break</td>
+              <td>(512-40) x .32 = <b>151.04</b></td>
+              <td>(800-40) x .32 = <b>243.2</b></td>
+            </tr>
+            <tr>
+              <td>$m-break</td>
+              <td>(801-40) x .40 = <b>304.4</b></td>
+              <td>(1024-40) x .40 = <b>393.6</b></td>
+            </tr>
+            <tr>
+              <td>$l-break</td>
+              <td>(1025-40) x .32 = <b>315.2</b></td>
+              <td>(1440-40) x .32 = <b>448</b></td>
+            </tr>
+          </table>
+          <aside class="notes">
+            So now that we have this information, we can calculate the minimum and maximum image size that we will need at each breakpoint.
+
+            The first value i have is the minimum width at each breakpoint, the second value i have is maximum, which will be 1px less than the next breakpoint.
+
+            In each row here, I have the minimum width in pixels subtracting 40px because of the 20px of padding that is on both sides of the site.
+
+            Then I am multiplying that by the percentage of the width that the image needs to take up the layout, which will then give me width of the image that i will need at each of these sizes.
+
+            So once we have that figured out, we are left with 8 different sizes.
+          </aside>
+        </section>
+        <section>
+          <aside style="width: 50%; float: left;">
+            <h3>152</h3>
+            <h3>244</h3>
+            <h3>280</h3>
+            <h3>305</h3>
+            <h3>316</h3>
+            <h3>395</h3>
+            <h3>448</h3>
+            <h3>471</h3>
+          </aside>
+
+          <aside class="fragment" style="width: 50%; float: right;">
+            <h3>304</h3>
+            <h3>488</h3>
+            <h3>560</h3>
+            <h3>610</h3>
+            <h3>632</h3>
+            <h3>790</h3>
+            <h3>896</h3>
+            <h3>942</h3>
+          </aside>
+
+          <aside class="notes">
+            I have rounded these numbers up even if the decimal point was below half a pixel, like .4, because it is better to have an image that is slightly larger than one that is too small.
+
+            Since we also need to think about retina screens with double the pixel densisty, we can multiply these numbers by 2, which will give us a second set of numbers.
+
+            So now we have 16 different image sizes that we would need to create, which seems like a lot. Looking at these numbers we can see that a lot of them are pretty close to eachother. So at this point we can start eliminating some of the ones where there isnt that much of a difference between it and another number.
+          </aside>
+        </section>
+        <section class="fade-in">
+          <aside style="width: 50%; float: left;">
+            <h3 style="text-decoration: line-through; color: grey;">152</h3>
+            <h3 style="text-decoration: line-through; color: grey;">244</h3>
+            <h3>280</h3>
+            <h3>305</h3>
+            <h3 style="text-decoration: line-through; color: grey;">316</h3>
+            <h3>395</h3>
+            <h3 style="text-decoration: line-through; color: grey;">448</h3>
+            <h3 style="text-decoration: line-through; color: grey;">471</h3>
+          </aside>
+
+          <aside style="width: 50%; float: right;">
+            <h3 style="text-decoration: line-through; color: grey;">304</h3>
+            <h3>488</h3>
+            <h3>560</h3>
+            <h3 style="text-decoration: line-through; color: grey;">610</h3>
+            <h3>632</h3>
+            <h3>790</h3>
+            <h3>896</h3>
+            <h3>942</h3>
+          </aside>
+          <aside class="notes">
+            I have gone through the images and crossed out the ones that I felt like were too close to another number where it wouldnt make a huge difference to have a larger image just scale down slightly to fit into the layout.
+          </aside>
+        </section>
+        <section>
+          <h3>280</h3>
+          <h3>305</h3>
+          <h3>488</h3>
+          <h3>560</h3>
+          <h3>632</h3>
+          <h3>790</h3>
+          <h3>896</h3>
+          <h3>942</h3>
+          <aside class="notes">
+            So now i am left with a much more manageble list of image sizes with only 8 different sizes that will work for any screen size or pixel density.
+
+            So, what do we do with these now? Do we have to go into photoshop and export every image on our site at these different sizes?
+
+            The short answer is no, The long answer is...
+          </aside>
+        </section>
+
+        <section>
+          <h2>Responsive Image Module</h2>
+          <aside class="fragment">D7 - picture and breakpoints modules (contributed)</aside>
+          <aside class="fragment">D8 - responsive image and breakpoint module (in core)</aside>
+          <aside class="notes">
+            we can use drupal to set up responsive image styles to handle this.
+
+            In drupal 7 you would use the picture and breakpoints modules which are contributed modules
+
+             In drupal 8 these modules are called responsive image and breakpoint and are part of core. By defualt they are not enabled but you can just go to the extend page and enable it.
+
+             In order to use these modules, first we need to set up some image styles.
+          </aside>
+        </section>
+        <section data-background-image="img/image-styles.png" data-background-size="contain">
+          <aside class="notes">
+            This is the image styles page. This is where we can set up different rules for handling images. We can do things like scale and crop an image to specific dimensions.
+          </aside>
+        </section>
+        <section data-background-image="img/edit-style.png" data-background-size="contain">
+          <aside class="notes">
+            So Im going to start setting up the image styles based on the sizes that we calculated before.
+
+            Im starting with the smallest one which is going to be 280x280 because we want this image to be a square. In this case, since we are going to have 8 different sizes, its a good idea to just set the name of the image style to be whatever the image dimension is. This can be helpful later on if you want to reuse the image style for something else.
+
+            Once I have named it, I can now select an effect to apply to the image.
+          </aside>
+        </section>
+        <section data-background-image="img/edit-style-2.png" data-background-size="contain">
+          <aside class="notes">
+            For these images I'm going to select the scale and crop effect. You can see some of the other effects that we could use in this dropdown.
+          </aside>
+        </section>
+        <section data-background-image="img/add-effect.png" data-background-size="contain">
+          <aside class="notes">
+            Once I've selected scale and crop, it brings me to this page where i can enter the dimensions
+          </aside>
+        </section>
+        <section data-background-image="img/add-effect-2.png" data-background-size="contain">
+          <aside class="notes">
+            In this case i am setting it to 280x280px, which means any image larger than this will be scaled down until the height or the width of the image reaches 280px, and whatever is left over will be cropped out resulting in a square image.
+          </aside>
+        </section>
+        <section data-background-image="img/edit-style-3.png" data-background-size="contain">
+          <aside class="notes">
+            Once I click add effect it will tell me that the effect has been successfully applied. Now I can save this, and repeat this process for the rest of the image sizes that I calculated earlier.
+
+            Once i've done that for the rest of the image sizes, I can head over to the respoinsive image styles page.
+          </aside>
+        </section>
+        <section data-background-image="img/responsive-image-styles-1.png" data-background-size="contain">
+          <aside class="notes">
+            This is the responsive image styles admin page. At the top there is an option to add a new responsive image style.
+          </aside>
+        </section>
+        <section data-background-image="img/responsive-image-styles-2.png" data-background-size="contain">
+          <aside class="notes">
+            Once I've clicked that, I will be brought up to this page where I can give it a name and select a Breakpont group. I will explain these a little bit later, for now I am just going to leave it as the default Responsive Image breakpoint group, and name this Side Image because that seems like a logical name for where I am using it on the site.
+          </aside>
+        </section>
+        <section data-background-image="img/responsive-image-styles-3.png" data-background-size="contain">
+          <aside class="notes">
+            Selecting that breakpoint will give me this set of options. At the top there is an optionset called type, and in order to use the sizes attribute that I showed earlier, I can select the option that says "Select multiple image styles and use the sizes attribute".
+
+            Once that is selected, it will give me a text field where I can input the media queries and sizes that I figured out earlier.
+
+            Below that I can select all of the image styles that I created based on those sizes
+          </aside>
+        </section>
+        <section data-background-image="img/responsive-image-styles-fallback.png" data-background-size="contain">
+          <aside class="notes">
+            Farther down on the same page I can set an image style as a fallback for if something goes wrong and the other sizes cant be loaded.
+          </aside>
+        </section>
+        <section>
+          <pre><code>
+            &lt;img
+              srcset=&quot;/sites/default/files/styles/280x280/thumbnail.jpg 280w,
+                      /sites/default/files/styles/488x488/thumbnail.jpg 488w,
+                      /sites/default/files/styles/560x560/thumbnail.jpg 560w,
+                      /sites/default/files/styles/632x632/thumbnail.jpg 632w,
+                      /sites/default/files/styles/790x790/thumbnail.jpg 790w,
+                      /sites/default/files/styles/896x896/thumbnail.jpg 896w,
+                      /sites/default/files/styles/942x942/thumbnail.jpg 942w,
+                      /sites/default/files/styles/305x305/thumbnail.jpg 1920w&quot;
+              sizes=&quot;(min-width: 64em) calc(32vw - 1.25em),
+                     (min-width: 50em) calc(40vw - 1.25em),
+                     (min-width: 32em) calc(32vw - 1.25em),
+                     100vw&quot;
+              src=&quot;/sites/default/files/styles/280x280/thumbnail.jpg&quot;
+              alt=&quot;My image&quot;&gt;
+          </code></pre>
+          <aside class="notes">
+            Once I've set that all up and applied it to an image field, The output will look something like this.
+
+            At the top we have the srcset attribute, which has the file path to the images that the image styles module has created for me, and beside that it specifies the width of the image.
+
+            Below that is the sizes attribute, where I have the media queries. In here I am specifying the media query and telling the browser what the minimum width of image it should use at that breakpoint. In this case i am using the calc() css rule to subtract the 1.25em padding from the width that the image will take up in the layout using viewport width.
+
+            So for example, if the browser width is 50 ems, I want the browser to choose an image that is equal to or larger than 40% of the viewport width, minus the 1.25em, which is 20px, of padding that would be on the side of the page.
+
+            Using 50ems as an example that would equal 300px. So the browser would probably end up chooseing the 488px image size.
+
+            And below that, we also have our fallback image specified in the src attribute.
+
+            So what does this all mean?
+          </aside>
+        </section>
+        <section data-background-image="img/network-resources-1.png" data-background-size="contain">
+          <aside class="notes">
+            this basically means that the browser is only going to download the image at the size that its actually going to use. In this example we can see in the network panel of the web inspector that it has only downloaded 1 version of this image.
+          </aside>
+        </section>
+        <section data-background-image="img/network-resources-2.png" data-background-size="contain">
+          <aside class="notes">
+            Here is another example of the browser knowing which image it should choose based on the layout information that we are giving it in the html file.
+
+            So this is all great, Its doing what we want it to do. but what if we wanted to have more control over what image style gets used at certain breakpoints?
+          </aside>
+        </section>
+        <section>
+          <h3>breakpoints.yml</h3>
+          <pre><code>
+            pl_demo.xs:
+              label: x-small
+              mediaQuery: 'all and (max-width: 32em)'
+              weight: 0
+              multipliers:
+                - 1x
+
+            pl_demo.s:
+              label: small
+              mediaQuery: 'all and (min-width: 32em)'
+              weight: 1
+              multipliers:
+                - 1x
+
+            pl_demo.m:
+              label: medium
+              mediaQuery: 'all and (min-width: 50em)'
+              weight: 2
+              multipliers:
+                - 1x
+
+            pl_demo.l:
+              label: large
+              mediaQuery: 'all and (min-width: 64em)'
+              weight: 3
+              multipliers:
+                - 1x
+
+            pl_demo.xl:
+              label: x-large
+              mediaQuery: 'all and (min-width: 90em)'
+              weight: 4
+              multipliers:
+                - 1x
+          </code></pre>
+          <aside class="notes">
+            Well, thats something that we can do by first defining out breakpoints in our themes breakpoint.yml file.
+
+            This file lives in the root of the theme and its where you can define media queries for your theme that you can use with modules like the responsive images module.
+
+            The first line is the theme name, pl_demo, and then a period followed by the name you want for the breakpoint.
+
+            below that you can give it a label that will show up on the admin pages.
+
+            under that you can define the media query. In this case I am using the same ones that i am using in my css files.
+
+            You can give it a weight for what order you want them to be in and you can also set a multiplier for pixel densitiy. If you wanted specific image styles for retina displays with double the pixel density you could define that here by putting - 2x below -1x.
+          </aside>
+        </section>
+        <section data-background-image="img/layout-with-banner.png" data-background-size="contain">
+
+          <aside class="notes">
+            so for this example, I am going to be setting up image styles for this page banner that stretches accross the full width of the layout.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-l-1.png" data-background-size="contain">
+          <aside class="notes">
+            First I will set up the image styles like we did before, in this case I am going to give them a name for what they are actually for instead of the dimesnions because I know these are going to be specifically for the banner. In this case i'll give it a name of Banner followed by the name of the breakpoint its for. so Banner L for Banner Large.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-l-2.png" data-background-size="contain">
+          <aside class="notes">
+            I'm going to give it a width of 1400px becuse my max width for the site is 1440px, minus the 20px of padding on each side of the layout. For the height I am going to divide the width by 4, which equals 350px. I'm doing this to give me an image ratio that is easy to work with. For this banner the image ratio is going to be 4:1. This will come in handy later on.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-s.png" data-background-size="contain">
+          <aside class="notes">
+            So im just going to do that same thing for the other image styles, making an image style for each breakpoint but keeping in mind that the image needs to be the size of the next breakpoint to be big enough.
+
+            So at a screen size of 525px, which is my small breakpoint, I would need to have an image that is big enough to make it to my next breakpoint, which would be 800px. So 800px minus the 20px of padding on both sizes gives me a width of 760px.
+
+            If i divide that by 4 i get a height of 190px, keeping with the 4:1 ratio.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-xs.png" data-background-size="contain">
+          <aside class="notes">
+            Once I get to the breakpoint for small screens, I want the image to be a bit higher, because in the last breakpoint the height was only 190px, which is getting pretty small.
+
+            I'm going to make this image a square, giving me a 1:1 ratio.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-responsive-1.png" data-background-size="contain">
+          <aside class="notes">
+            now I can go back over to the responsive image admin page and add a new responsive image style.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-responsive-2.png" data-background-size="contain">
+          <aside class="notes">
+            Instead of leaving this at the default breakpoint group, this time i am going to select the beakpoint group for my theme that i set up in my breakpoints.yml file.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-responsive-3.png" data-background-size="contain">
+          <aside class="notes">
+            Once I have that selected, It will give me accordion panels for each breakpoint that I set up in the yml file.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-responsive-4.png" data-background-size="contain">
+          <aside class="notes">inside of there I can now select a specific image style for each breakpoint</aside>
+        </section>
+        <section data-background-image="img/banner-responsive-5.png" data-background-size="contain">
+          <aside class="notes"> and once I have set those for each of the image styles that I just created, I can set a fallback image style and save the responsive image style. So now I can go to the manage display page for a content type and use this on an image field</aside>
+        </section>
+        <section data-background-image="img/banner-responsive-6.png" data-background-size="contain">
+          <aside class="notes"> To do that I just select Responsive image as the format for the field, and then I can select the Banner responsive image style that I just made. Once ive done that and saved it, I can check it in the browser.</aside>
+        </section>
+        <section data-background-image="img/banner-responsive-7.png" data-background-size="contain">
+          <aside class="notes">
+            So here we an see that on small screens the image is being cropped to a square like we set it to do.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-responsive-8.png" data-background-size="contain">
+          <aside class="notes">
+            and on larger screens its set to the 4:1 ratio.
+          </aside>
+        </section>
+        <section>
+          <h3>Picture Element</h3>
+          <pre><code>
+            &lt;picture&gt;
+              &lt;source srcset=&quot;/img/banner_l/huge-image.jpg 1x&quot;
+              media=&quot;all and (min-width: 64em)&quot;
+              type=&quot;image/jpeg&quot;&gt;
+
+              &lt;source srcset=&quot;/img/banner_m/huge-image.jpg 1x&quot;
+              media=&quot;all and (min-width: 50em)&quot;
+              type=&quot;image/jpeg&quot;&gt;
+
+              &lt;source srcset=&quot;/img/banner_s/huge-image.jpg 1x&quot;
+              media=&quot;all and (min-width: 32em)&quot;
+              type=&quot;image/jpeg&quot;&gt;
+
+              &lt;source srcset=&quot;/img/banner_xs/huge-image.jpg 1x&quot;
+              media=&quot;all and (max-width: 32em)&quot;
+              type=&quot;image/jpeg&quot;&gt;
+
+              &lt;img src=&quot;/img/banner_xs/huge-image.jpg&quot; alt=&quot;A really big image&quot;
+              typeof=&quot;foaf:Image&quot;&gt;
+            &lt;/picture&gt;
+            </code></pre>
+            <aside class="notes">
+              So this is the markup that gets output when I use different image styles for each breakpoint.
+
+              Everything is inside of the html picture element.
+
+              Inside of those is a source element for each breakpoint that contains attributes for the srcset, which contains the path to the image, and also gives information about the pixel density, which in this case is 1x.
+            </aside>
+        </section>
+        <section data-background-image="img/banner-responsive-9.png" data-background-size="contain">
+          <aside class="notes">
+            So this is great, I have the images cropping to the sizes i want them to be. But when I show this to a client, they want to be able to control what part of the image gets displayed when it gets cropped.
+
+            By default the scale and crop effects on an image style will just do this from the center point of the image.
+
+            How can i solve this problem?
+          </aside>
+        </section>
+        <section>
+          <h1>Image crop module</h1>
+          <aside class="notes">
+            This is where the image crop module can help. This is a contributed module that lets you define a aspct ratio that the image can be croped to.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-1.png" data-background-size="contain">
+          <aside class="notes">
+            To use this, we first need to set up a crop type, which is the admin page that im showing here
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-2.png" data-background-size="contain">
+          <aside class="notes">
+            This is similar to setting up a responsive image style, except this time we will be defining an aspect ration instead of an fixed width to be cropped to. So for this one i am setting it up for a 4:1 ratio just like the banner image styles that I set up earlier.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-3.png" data-background-size="contain">
+          <aside class="notes">
+            We also have options for setting a soft or hard cropping limit on the image.
+
+            A soft limit will give you a warning if you are cropping an image smaller than the defined dimensions, but it will still let you do it
+
+            A hard limit will not let you crop something below the defined dimensions.
+
+            Any dimension above this is fine.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-4.png" data-background-size="contain">
+          <aside class="notes">
+            So now I am just to set a hard limit for these 4:1 ratio images that will be the dimensions of the largest breakpoint that i want this image to show at
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-5.png" data-background-size="contain">
+          <aside class="notes">
+             im also going to set up one for the 1:1 ratio to use for small screens
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-6.png" data-background-size="contain">
+          <aside class="notes">
+            and i will just set its hard limit to be 485x485, because that the largest size that i need the square image to display at
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-7.png" data-background-size="contain">
+          <aside class="notes">
+            Now to use the crop types that I just set up, I can head back over to my Banner image styles, and now I will add a new effect to them them called "Manual Crop"
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-8.png" data-background-size="contain">
+          <aside class="notes">
+            So for banner large, i am setting it to manual crop, using the 4:1 crop type
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-9.png" data-background-size="contain">
+          <aside class="notes">
+            And for Banner extra small, I will set that to use the 1:1 ratio. Im also going to make sure that this comes up before the scale and crop effect, that way if the scale and crop dimensions are set to a dimension that is lower than the hard limit of the crop type, it will get scaled and cropped after the manual crop has been happened.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-10.png" data-background-size="contain">
+          <aside class="notes">
+            Once i have set the image style to use the manual crop effect and set the crop type, i can go to the manage form display of the content type for the field that i want to use this on.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-11.png" data-background-size="contain">
+          <aside class="notes">
+            Now i can set the field to use the ImageWidget Crop formatter. This is what will change how the form looks to a content editor when they edit the node
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-12.png" data-background-size="contain">
+          <aside class="notes">
+            Once I have selected Image Widget Crop as the formatter, I will get some more options to set the preview image size, the crop preview image size and select the crop types that i want to be able to use
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-13.png" data-background-size="contain">
+          <aside class="notes">
+            And now if i go edit the node for the content type that i have set this image formatter on, I will now have a new option top to crop the image, and if i click on that and expand it
+          </aside>
+        </section>
+        <section data-background-video="img/banner-crop-14.mp4" data-background-size="contain">
+          <aside class="notes">
+            I get the option to crop the image using the crop types with aspect rations that i set up previously. So now i am able to move the crop area around on the preview image, and resize it, so i know exactly what is going to apear in the 4:1 ratio banner image.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-15.png" data-background-size="contain">
+          <aside class="notes">
+            So now if i set the 1:1 ratio crop area, and save the node
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-16.png" data-background-size="contain">
+          <aside class="notes">
+            I can see that it is only showing the part of the image that i set the crop area to.
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-17.png" data-background-size="contain">
+          <aside class="notes">
+            Same thing with the 4:1 ratio crop area, Here i am setting it...
+          </aside>
+        </section>
+        <section data-background-image="img/banner-crop-18.png" data-background-size="contain">
+          <aside class="notes">
+            And here is its on the site
+          </aside>
+        </section>
+        <section data-background-video="img/banner-crop-19.mp4" data-background-size="contain">
+          <aside class="notes">
+            And now we can see that this is working when i resize the screen, giving the client full control over what parts of the image get cropped out at different screen sizes
+
+            So i hope this has been slightly informative for some of you, i know we went went over a lot.
+          </aside>
+        </section>
+        <section>
+          <h1>Thank You</h1>
+        </section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+  </body>
+</html>
